@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
+
 public class Lox{
     static boolean hadError = false;
     public static void main(String[] args) throws IOException{
