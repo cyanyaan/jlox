@@ -41,6 +41,35 @@ class Scanner{
             case '+': addToken(PLUS); break;
             case ';': addToken(SEMICOLON); break;
             case '*': addToken(STAR); break;
+            case '!':
+                addToken(match('=') ? BANG_EQUAL : BANG);
+                break;
+            case '=':
+                addToken(match('=') ? EQUAL_EQUAL : EQUAL);
+            break;
+
+            case '<':
+                addToken(match('=') ? LESS_EQUAL : LESS);
+                break;
+            case '>':
+                addToken(match('=') ? GREATER_EQUAL : GREATER);
+                break;
+            case '/':  
+                if(match('/')) {  //tjhis is to check for commetns
+                    while (peek() != '\n' && !isAtEnd()) {
+                        advance();
+                    }
+                } else{
+                    addToken(SLASH);
+                }
+                break;
+            case ' ':
+            case '\r':
+            case '\t':
+                break;
+            case '\n':
+                line++;
+                break;
 
             default:
                 Lox.error(line, "Unexpected Character. ");
@@ -48,8 +77,21 @@ class Scanner{
         }
     }
 
+    private boolean match(char expected){
+        if(isAtEnd()) return false;
+        if(source.charAt(current) != expected) return false;
+        
+        current++;
+        return true;
+    }
+
     private boolean isAtEnd(){
         return current >= source.length();
+    }
+
+    private char peek(){
+        if(isAtEnd()) return '\0';
+        return source.charAt(current);
     }
 
     private char advance(){
