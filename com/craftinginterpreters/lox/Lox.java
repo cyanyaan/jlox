@@ -30,14 +30,12 @@ public class Lox{
         }
     }
 
-
-
     private static void runPrompt() throws IOException{
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);
 
         for(;;){
-            System.out.println("> ");
+            System.out.print("> ");
             String line = reader.readLine();
             if(line == null) break;
             run(line);

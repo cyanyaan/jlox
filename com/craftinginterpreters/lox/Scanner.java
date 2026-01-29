@@ -40,6 +40,7 @@ class Scanner{
     Scanner(String source){
         this.source = source;
     }
+    
     List<Token> scanTokens(){
         while (!isAtEnd()) {
             start = current;
