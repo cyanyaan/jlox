@@ -23,10 +23,14 @@ public class GenerateAst {
         String path = outputDir + "/" + baseName + ".java";
         PrintWriter writer = new PrintWriter(path, "UTF-8");
 
-        writer.println("import com.craftinginterpreters.lox");
+        writer.println("package com.craftinginterpreters.lox;");
         writer.println();
         writer.println("import java.util.List;");
         writer.println("abstract class " + baseName + "{");
+
+        defineVisitors(writer, baseName, types);
+        writer.println();
+        writer.println("abstract <R> R accept(Visitor<R> visitor);");
 
         for(String type : types) {
             String className = type.split(":")[0].trim();
@@ -39,19 +43,34 @@ public class GenerateAst {
         writer.close();
     }
 
+    private static void defineVisitors(PrintWriter writer, String baseName, List<String> types) {
+        writer.println("interface Visitor<R> {");
+        for (String type : types) {
+            String typeName = type.split(":")[0].trim();
+            writer.println("R visit"+ typeName + baseName +"(" + typeName + " " + baseName.toLowerCase() + ");");
+        }
+        writer.println("}");
+    }
+
     static void defineType(PrintWriter writer, String baseName, String className, String fieldList){
-        writer.println("static class " + className + "extends" + baseName + " {");
+        writer.println("static class " + className + " extends " + baseName + " {");
         writer.println(className + "(" + fieldList + ") {");
 
         String[] fields = fieldList.split(",");
         for(String field : fields) {
-            String name = field.split(" ")[1];
+            String name = field.trim().split(" ")[1];
             writer.println(" this." + name + " = " + name + ";");
         }
 
         writer.println("}");
         
         writer.println();
+
+        writer.println("@Override");
+        writer.println("<R> R accept(Visitor<R> visitor) {");
+        writer.println("return visitor.visit" + className + baseName + "(this)");
+        writer.println("}");
+
 
         for(String field : fields){
             writer.println("final " + field + ";");
